@@ -172,6 +172,8 @@ private:
   Factories tests_;
 };
 
+
+
 template <typename T, typename U>
 TestResult& checkEqual(TestResult& result, T expected, U actual,
                        const char* file, unsigned int line, const char* expr) {
@@ -182,12 +184,59 @@ TestResult& checkEqual(TestResult& result, T expected, U actual,
   }
   return result;
 }
+// Specialization for const char8_t* to const char*
+//template <>
+//TestResult& checkEqual(TestResult& result, const char8_t* expected,
+//                       Json::String actual, const char* file, unsigned int line,
+//                       const char* expr); 
+                       /*
+{
+  std::string expected_str(reinterpret_cast<const char*>(expected));
+  std::string actual_str(actual);
+  if (expected_str != actual_str) {
+    result.addFailure(file, line, expr);
+    result << "Expected: " << expected_str << "\n";
+    result << "Actual  : " << actual_str;
+  }
+  return result;
+}*/
+
+// Specialization for std::basic_string<char8_t>
+//template <>
+//TestResult& checkEqual(TestResult& result, std::u8string expected,
+//                       std::u8string actual, const char* file,
+//                       unsigned int line, const char* expr) {
+//  if (expected != actual) {
+//    result.addFailure(file, line, expr);
+//    result << "Expected: " << std::string(expected.begin(), expected.end())
+//           << "\n";
+//    result << "Actual  : " << std::string(actual.begin(), actual.end());
+//  }
+//  return result;
+//}
+
+
+
+// Specialization for const char* to const char8_t*
+/*template <>
+TestResult& checkEqual(TestResult& result, const char* expected,
+                       const char8_t* actual, const char* file,
+                       unsigned int line, const char* expr) {
+  std::string expected_str(expected);
+  std::string actual_str(reinterpret_cast<const char*>(actual));
+  if (expected_str != actual_str) {
+    result.addFailure(file, line, expr);
+    result << "Expected: " << expected_str << "\n";
+    result << "Actual  : " << actual_str;
+  }
+  return result;
+}*/
 
 Json::String ToJsonString(const char* toConvert);
-Json::String ToJsonString(Json::String in);
-#if JSONCPP_USING_SECURE_MEMORY
-Json::String ToJsonString(std::string in);
-#endif
+Json::String ToJsonString(Json::String &in);
+//#if JSONCPP_USING_SECURE_MEMORY
+Json::String ToJsonString(const std::string &in);
+//#endif
 
 TestResult& checkStringEqual(TestResult& result, const Json::String& expected,
                              const Json::String& actual, const char* file,

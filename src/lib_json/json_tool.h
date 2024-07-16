@@ -9,6 +9,8 @@
 #if !defined(JSON_IS_AMALGAMATION)
 #include <json/config.h>
 #endif
+#include <iterator>
+#include <vector>
 
 // Also support old flag NO_LOCALE_SUPPORT
 #ifdef NO_LOCALE_SUPPORT
@@ -78,14 +80,26 @@ using UIntToStringBuffer = char[uintToStringBufferSize];
  * @param current Input/Output string buffer.
  *        Must have at least uintToStringBufferSize chars free.
  */
-static inline void uintToString(LargestUInt value, char*& current) {
+/* static inline void uintToString(LargestUInt value, char*& current) {
   *--current = 0;
   do {
     *--current = static_cast<char>(value % 10U + static_cast<unsigned>('0'));
     value /= 10;
   } while (value != 0);
-}
+}*/
 
+static inline void uintToString(LargestUInt value,
+                                std::vector<char>& current) {
+  current.clear();
+  current.push_back(0); // null terminator for a string
+  //*--current = 0;
+  do {
+  // *--current = 
+   current.push_back(static_cast<char>(value % 10U + static_cast<unsigned>('0')));
+    value /= 10;
+  } while (value != 0);
+  std::reverse(current.begin(),current.end());
+}
 /** Change ',' to '.' everywhere in buffer.
  *
  * We had a sophisticated way, but it did not work in WinCE.

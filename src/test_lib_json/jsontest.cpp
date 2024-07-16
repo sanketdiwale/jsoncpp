@@ -65,14 +65,27 @@
 #define NOMDI
 #define NOCTLMGR
 #define NOWINMESSAGES
-#include <windows.h>
+#include <Windows.h>
 #endif // if defined(_WIN32)
 
 namespace JsonTest {
 
 // class TestResult
 // //////////////////////////////////////////////////////////////////
-
+// Specialization for const char8_t* to const char*
+/* template <>
+TestResult& checkEqual(TestResult& result, const char8_t* expected,
+                       Json::String actual, const char* file, unsigned int line,
+                       const char* expr) {
+  std::string expected_str(reinterpret_cast<const char*>(expected));
+  std::string actual_str(actual);
+  if (expected_str != actual_str) {
+    result.addFailure(file, line, expr);
+    result << "Expected: " << expected_str << "\n";
+    result << "Actual  : " << actual_str;
+  }
+  return result;
+}*/
 TestResult::TestResult() {
   // The root predicate has id 0
   rootPredicateNode_.id_ = 0;
@@ -405,16 +418,26 @@ void Runner::printUsage(const char* appName) {
 // //////////////////////////////////////////////////////////////////
 
 Json::String ToJsonString(const char* toConvert) {
-  return Json::String(toConvert);
+  //if (!toConvert) {
+    return Json::String(toConvert);
+  //} else {
+  //  return std::string("");
+  //}
 }
 
-Json::String ToJsonString(Json::String in) { return in; }
-
-#if JSONCPP_USING_SECURE_MEMORY
-Json::String ToJsonString(std::string in) {
-  return Json::String(in.data(), in.data() + in.length());
+Json::String ToJsonString(Json::String &in) { 
+    //if (in.size() == 0) {
+    //    return Json::String("");
+    //} else {
+        return in;
+    //}
 }
-#endif
+
+//#if JSONCPP_USING_SECURE_MEMORY
+Json::String ToJsonString(const std::string &in) {
+  return Json::String(in.begin(), in.end());
+}
+//#endif
 
 TestResult& checkStringEqual(TestResult& result, const Json::String& expected,
                              const Json::String& actual, const char* file,

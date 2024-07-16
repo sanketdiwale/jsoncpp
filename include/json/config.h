@@ -114,8 +114,8 @@ using LargestUInt = unsigned int;
 #else                 // if defined(JSON_NO_INT64)
 // For Microsoft Visual use specific types as long long is not supported
 #if defined(_MSC_VER) // Microsoft Visual Studio
-using Int64 = __int64;
-using UInt64 = unsigned __int64;
+using Int64 = int64_t;//__int64;
+using UInt64 = uint64_t;//unsigned __int64;
 #else                 // if defined(_MSC_VER) // Other platforms, use long long
 using Int64 = int64_t;
 using UInt64 = uint64_t;

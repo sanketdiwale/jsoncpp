@@ -78,26 +78,35 @@ Features Features::strictMode() {
 // Implementation of class Reader
 // ////////////////////////////////
 
-bool Reader::containsNewLine(Reader::Location begin, Reader::Location end) {
+/* bool Reader::containsNewLine(Reader::Location begin,
+                                  Reader::Location end) {
   return std::any_of(begin, end, [](char b) { return b == '\n' || b == '\r'; });
-}
+}*/
 
 // Class Reader
 // //////////////////////////////////////////////////////////////////
 
-Reader::Reader() : features_(Features::all()) {}
+//Reader::Reader() : features_(Features::all()) {}
 
-Reader::Reader(const Features& features) : features_(features) {}
+//Reader::Reader(const Features& features) : features_(features) {}
 
-bool Reader::parse(const std::string& document, Value& root,
+/* bool Reader::parse(const std::string& document, Value& root,
                    bool collectComments) {
   document_.assign(document.begin(), document.end());
   const char* begin = document_.c_str();
   const char* end = begin + document_.length();
   return parse(begin, end, root, collectComments);
-}
+}*/
 
-bool Reader::parse(std::istream& is, Value& root, bool collectComments) {
+/* bool Reader::parse(const std::string& document, Value& root,
+                   bool collectComments) {
+  document_.assign(document.begin(), document.end());
+  const char* begin = document_.c_str();
+  const char* end = begin + document_.length();
+  return parse(begin, end, root, collectComments);
+}*/
+
+/* bool Reader::parse(std::istream& is, Value& root, bool collectComments) {
   // std::istream_iterator<char> begin(is);
   // std::istream_iterator<char> end;
   // Those would allow streamed input from a file, if parse() were a
@@ -107,9 +116,9 @@ bool Reader::parse(std::istream& is, Value& root, bool collectComments) {
   // create an extra copy.
   String doc(std::istreambuf_iterator<char>(is), {});
   return parse(doc.data(), doc.data() + doc.size(), root, collectComments);
-}
+}*/
 
-bool Reader::parse(const char* beginDoc, const char* endDoc, Value& root,
+/* bool Reader::parse(const char* beginDoc, const char* endDoc, Value& root,
                    bool collectComments) {
   if (!features_.allowComments_) {
     collectComments = false;
@@ -146,9 +155,9 @@ bool Reader::parse(const char* beginDoc, const char* endDoc, Value& root,
     }
   }
   return successful;
-}
+}*/
 
-bool Reader::readValue() {
+/* bool Reader::readValue() {
   // readValue() may call itself only if it calls readObject() or ReadArray().
   // These methods execute nodes_.push() just before and nodes_.pop)() just
   // after calling readValue(). parse() executes one nodes_.push(), so > instead
@@ -224,8 +233,9 @@ bool Reader::readValue() {
 
   return successful;
 }
+* /
 
-void Reader::skipCommentTokens(Token& token) {
+/ * void Reader::skipCommentTokens(Token& token) {
   if (features_.allowComments_) {
     do {
       readToken(token);
@@ -234,8 +244,8 @@ void Reader::skipCommentTokens(Token& token) {
     readToken(token);
   }
 }
-
-bool Reader::readToken(Token& token) {
+*/
+/* bool Reader::readToken(Token& token) {
   skipSpaces();
   token.start_ = current_;
   Char c = getNextChar();
@@ -304,9 +314,9 @@ bool Reader::readToken(Token& token) {
     token.type_ = tokenError;
   token.end_ = current_;
   return ok;
-}
+}*/
 
-void Reader::skipSpaces() {
+/* void Reader::skipSpaces() {
   while (current_ != end_) {
     Char c = *current_;
     if (c == ' ' || c == '\t' || c == '\r' || c == '\n')
@@ -314,9 +324,9 @@ void Reader::skipSpaces() {
     else
       break;
   }
-}
+}*/
 
-bool Reader::match(const Char* pattern, int patternLength) {
+/* bool Reader::match(const Char* pattern, int patternLength) {
   if (end_ - current_ < patternLength)
     return false;
   int index = patternLength;
@@ -325,9 +335,9 @@ bool Reader::match(const Char* pattern, int patternLength) {
       return false;
   current_ += patternLength;
   return true;
-}
+}*/
 
-bool Reader::readComment() {
+/* bool Reader::readComment() {
   Location commentBegin = current_ - 1;
   Char c = getNextChar();
   bool successful = false;
@@ -348,9 +358,9 @@ bool Reader::readComment() {
     addComment(commentBegin, current_, placement);
   }
   return true;
-}
+}*/
 
-String Reader::normalizeEOL(Reader::Location begin, Reader::Location end) {
+/* String Reader::normalizeEOL(Reader::Location begin, Reader::Location end) {
   String normalized;
   normalized.reserve(static_cast<size_t>(end - begin));
   Reader::Location current = begin;
@@ -367,9 +377,9 @@ String Reader::normalizeEOL(Reader::Location begin, Reader::Location end) {
     }
   }
   return normalized;
-}
+}*/
 
-void Reader::addComment(Location begin, Location end,
+/* void Reader::addComment(Location begin, Location end,
                         CommentPlacement placement) {
   assert(collectComments_);
   const String& normalized = normalizeEOL(begin, end);
@@ -379,9 +389,9 @@ void Reader::addComment(Location begin, Location end,
   } else {
     commentsBefore_ += normalized;
   }
-}
+}*/
 
-bool Reader::readCStyleComment() {
+/* bool Reader::readCStyleComment() {
   while ((current_ + 1) < end_) {
     Char c = getNextChar();
     if (c == '*' && *current_ == '/')
@@ -860,7 +870,7 @@ bool Reader::pushError(const Value& value, const String& message,
 }
 
 bool Reader::good() const { return errors_.empty(); }
-
+*/
 // Originally copied from the Features class (now deprecated), used internally
 // for features implementation.
 class OurFeatures {
@@ -897,8 +907,10 @@ public:
   };
 
   explicit OurReader(OurFeatures const& features);
-  bool parse(const char* beginDoc, const char* endDoc, Value& root,
-             bool collectComments = true);
+  bool parse(const std::string Doc, Value& root, bool collectComments);
+  //bool parse(const std::vector<char> Doc, Value& root, bool collectComments);
+  //bool parse(const char* beginDoc, const char* endDoc, Value& root,
+  //           bool collectComments = true);
   String getFormattedErrorMessages() const;
   std::vector<StructuredError> getStructuredErrors() const;
 
@@ -1007,7 +1019,54 @@ bool OurReader::containsNewLine(OurReader::Location begin,
 
 OurReader::OurReader(OurFeatures const& features) : features_(features) {}
 
-bool OurReader::parse(const char* beginDoc, const char* endDoc, Value& root,
+bool OurReader::parse(const std::string Doc, Value& root,
+                      bool collectComments) {
+  if (!features_.allowComments_) {
+    collectComments = false;
+  }
+
+  begin_ = &Doc.front();
+  end_ = &Doc.back();
+  collectComments_ = collectComments;
+  current_ = begin_;
+  lastValueEnd_ = nullptr;
+  lastValue_ = nullptr;
+  commentsBefore_.clear();
+  errors_.clear();
+  while (!nodes_.empty())
+    nodes_.pop();
+  nodes_.push(&root);
+
+  // skip byte order mark if it exists at the beginning of the UTF-8 text.
+  skipBom(features_.skipBom_);
+  bool successful = readValue();
+  nodes_.pop();
+  Token token;
+  skipCommentTokens(token);
+  if (features_.failIfExtra_ && (token.type_ != tokenEndOfStream)) {
+    addError("Extra non-whitespace after JSON value.", token);
+    return false;
+  }
+  if (collectComments_ && !commentsBefore_.empty())
+    root.setComment(commentsBefore_, commentAfter);
+  if (features_.strictRoot_) {
+    if (!root.isArray() && !root.isObject()) {
+      // Set error location to start of doc, ideally should be first token found
+      // in doc
+      token.type_ = tokenError;
+      token.start_ = &Doc.front();
+      token.end_ = &Doc.back();
+      addError(
+          "A valid JSON document must be either an array or an object value.",
+          token);
+      return false;
+    }
+  }
+  return successful;
+}
+
+/* bool OurReader::parse(const char* beginDoc, const char* endDoc,
+                           Value& root,
                       bool collectComments) {
   if (!features_.allowComments_) {
     collectComments = false;
@@ -1052,7 +1111,7 @@ bool OurReader::parse(const char* beginDoc, const char* endDoc, Value& root,
   }
   return successful;
 }
-
+*/
 bool OurReader::readValue() {
   //  To preserve the old behaviour we cast size_t to int.
   if (nodes_.size() > features_.stackLimit_)
@@ -1879,14 +1938,21 @@ class OurCharReader : public CharReader {
 public:
   OurCharReader(bool collectComments, OurFeatures const& features)
       : collectComments_(collectComments), reader_(features) {}
-  bool parse(char const* beginDoc, char const* endDoc, Value* root,
+  bool parse(std::string Doc, Value* root, String* errs) {
+    bool ok = reader_.parse(Doc, *root, collectComments_);
+    if (errs) {
+      *errs = reader_.getFormattedErrorMessages();
+    }
+    return ok;
+  }
+  /* bool parse(char const* beginDoc, char const* endDoc, Value* root,
              String* errs) override {
     bool ok = reader_.parse(beginDoc, endDoc, *root, collectComments_);
     if (errs) {
       *errs = reader_.getFormattedErrorMessages();
     }
     return ok;
-  }
+  }*/
 };
 
 CharReaderBuilder::CharReaderBuilder() { setDefaults(&settings_); }
@@ -1988,7 +2054,7 @@ bool parseFromStream(CharReader::Factory const& fact, IStream& sin, Value* root,
   char const* end = begin + doc.size();
   // Note that we do not actually need a null-terminator.
   CharReaderPtr const reader(fact.newCharReader());
-  return reader->parse(begin, end, root, errs);
+  return reader->parse(doc, root, errs);
 }
 
 IStream& operator>>(IStream& sin, Value& root) {

@@ -15,9 +15,10 @@ namespace Json {
 class Exception;
 }
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+extern "C" int LLVMFuzzerTestOneInput(const std::vector<uint8_t> data,
+                                      size_t size) {
+  //std::vector<uint8_t> data_vector(data, data + size);
   Json::CharReaderBuilder builder;
-
   if (size < sizeof(uint32_t)) {
     return 0;
   }
@@ -26,7 +27,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
                                  (static_cast<uint32_t>(data[1]) << 8) |
                                  (static_cast<uint32_t>(data[2]) << 16) |
                                  (static_cast<uint32_t>(data[3]) << 24);
-  data += sizeof(uint32_t);
+  //data += sizeof(uint32_t);
   size -= sizeof(uint32_t);
 
   builder.settings_["failIfExtra"] = hash_settings & (1 << 0);
@@ -42,11 +43,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   builder.settings_["allowTrailingCommas_"] = hash_settings & (1 << 10);
 
   std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
-
+  std::vector<uint8_t> subvector(data.begin() + 4, data.end());
   Json::Value root;
-  const auto data_str = reinterpret_cast<const char*>(data);
+  std::string substr(data.begin() + 4, data.end());
+  //const auto data_str = reinterpret_cast<const char*>(subvector.data());
   try {
-    reader->parse(data_str, data_str + size, &root, nullptr);
+    reader->parse(substr,
+                  &root,
+                  nullptr); // reinterpret_cast<const char*>(subvector.front()),
+    //reinterpret_cast<const char*>(subvector.back()),
   } catch (Json::Exception const&) {
   }
   // Whether it succeeded or not doesn't matter.

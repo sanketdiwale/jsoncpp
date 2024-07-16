@@ -60,7 +60,7 @@ static Json::String readInputTestFile(const char* path) {
   auto const size = ftell(file);
   auto const usize = static_cast<size_t>(size);
   fseek(file, 0, SEEK_SET);
-  auto buffer = new char[size + 1];
+  auto buffer = new char[usize + 1];
   buffer[size] = 0;
   Json::String text;
   if (fread(buffer, 1, usize, file) == usize)
@@ -141,7 +141,8 @@ static int parseAndSaveValueTree(const Json::String& input,
     std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
     Json::String errors;
     const bool parsingSuccessful =
-        reader->parse(input.data(), input.data() + input.size(), root, &errors);
+        reader->parse(std::string(input), root,
+                      &errors); // input.data(), input.data() + input.size()
 
     if (!parsingSuccessful) {
       std::cerr << "Failed to parse " << kind << " file: " << std::endl
@@ -152,14 +153,15 @@ static int parseAndSaveValueTree(const Json::String& input,
     // We may instead check the legacy implementation (to ensure it doesn't
     // randomly get broken).
   } else {
-    Json::Reader reader(features);
+    /* Json::Reader reader(features);
     const bool parsingSuccessful =
-        reader.parse(input.data(), input.data() + input.size(), *root);
-    if (!parsingSuccessful) {
-      std::cerr << "Failed to parse " << kind << " file: " << std::endl
-                << reader.getFormatedErrorMessages() << std::endl;
+        reader.parse(input.data(), input.data() + input.size(), *root);*/
+    //if (!parsingSuccessful) {
+    std::cerr << "Failed to parse " << kind << " file: " << std::endl
+              << "legacy parser is removed" << std::endl;
+     //reader.getFormatedErrorMessages() << std::endl;
       return 1;
-    }
+    //}
   }
 
   if (!parseOnly) {

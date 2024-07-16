@@ -8,7 +8,8 @@
 
 #include <cstddef>
 #include <stdint.h>
-
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size);
+#include <vector>
+extern "C" int LLVMFuzzerTestOneInput(const std::vector<uint8_t> data,
+                                      size_t size);
 
 #endif // ifndef FUZZ_H_INCLUDED

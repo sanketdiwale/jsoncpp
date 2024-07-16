@@ -148,8 +148,9 @@ public:
 /** \brief Abstract class for writers.
  * \deprecated Use StreamWriter. (And really, this is an implementation detail.)
  */
-class JSON_API Writer {
+class JSON_API [[deprecated]] Writer {
 public:
+  Writer() = default;
   virtual ~Writer();
 
   virtual String write(const Value& root) = 0;

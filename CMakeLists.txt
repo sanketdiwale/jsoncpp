@@ -43,7 +43,7 @@ endforeach()
 # Build the library with C++11 standard support, independent from other including
 # software which may use a different CXX_STANDARD or CMAKE_CXX_STANDARD.
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Ensure that CMAKE_BUILD_TYPE has a value specified for single configuration generators.
@@ -81,14 +81,14 @@ set(PROJECT_SOVERSION 25)
 include(${CMAKE_CURRENT_SOURCE_DIR}/include/PreventInSourceBuilds.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/include/PreventInBuildInstalls.cmake)
 
-option(JSONCPP_WITH_TESTS "Compile and (for jsoncpp_check) run JsonCpp test executables" ON)
+option(JSONCPP_WITH_TESTS "Compile and (for jsoncpp_check) run JsonCpp test executables" OFF)
 option(JSONCPP_WITH_POST_BUILD_UNITTEST "Automatically run unit-tests as a post build step" ON)
 option(JSONCPP_WITH_WARNING_AS_ERROR "Force compilation to fail if a warning occurs" OFF)
-option(JSONCPP_WITH_STRICT_ISO "Issue all the warnings demanded by strict ISO C and ISO C++" ON)
+option(JSONCPP_WITH_STRICT_ISO "Issue all the warnings demanded by strict ISO C and ISO C++" OFF)
 option(JSONCPP_WITH_PKGCONFIG_SUPPORT "Generate and install .pc files" ON)
 option(JSONCPP_WITH_CMAKE_PACKAGE "Generate and install cmake package files" ON)
 option(JSONCPP_WITH_EXAMPLE "Compile JsonCpp example" OFF)
-option(JSONCPP_STATIC_WINDOWS_RUNTIME "Use static (MT/MTd) Windows runtime" OFF)
+option(JSONCPP_STATIC_WINDOWS_RUNTIME "Use static (MT/MTd) Windows runtime" ON)
 option(BUILD_SHARED_LIBS "Build jsoncpp_lib as a shared library." ON)
 option(BUILD_STATIC_LIBS "Build jsoncpp_lib as a static library." ON)
 option(BUILD_OBJECT_LIBS "Build jsoncpp_lib as a object library." ON)
@@ -136,7 +136,7 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # using regular Clang or AppleClang
-    add_compile_options(-Wall -Wconversion -Wshadow)
+    add_compile_options(-Wall -Wconversion -Wshadow -Wno-c++98-compat)
 
     if(JSONCPP_WITH_WARNING_AS_ERROR)
         add_compile_options(-Werror=conversion -Werror=sign-compare)

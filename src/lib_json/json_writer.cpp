@@ -92,27 +92,33 @@ using StreamWriterPtr = std::auto_ptr<StreamWriter>;
 #endif
 
 String valueToString(LargestInt value) {
-  UIntToStringBuffer buffer;
-  char* current = buffer + sizeof(buffer);
+  //UIntToStringBuffer buffer;
+  std::vector<char> current;
+  //char* current = buffer + sizeof(buffer);
   if (value == Value::minLargestInt) {
     uintToString(LargestUInt(Value::maxLargestInt) + 1, current);
-    *--current = '-';
+    //*--current = '-';
+    current.insert(current.begin(), '-');
   } else if (value < 0) {
     uintToString(LargestUInt(-value), current);
-    *--current = '-';
+    //*--current = '-';
+    current.insert(current.begin(), '-');
   } else {
     uintToString(LargestUInt(value), current);
   }
-  assert(current >= buffer);
-  return current;
+  std::string current_str(current.begin(), current.end());
+  //assert(current >= buffer);
+  return current_str;
 }
 
 String valueToString(LargestUInt value) {
-  UIntToStringBuffer buffer;
-  char* current = buffer + sizeof(buffer);
+  //UIntToStringBuffer buffer;
+  //char* current = buffer + sizeof(buffer);
+  std::vector<char> current;
   uintToString(value, current);
-  assert(current >= buffer);
-  return current;
+  //assert(current >= buffer);
+  std::string current_str(current.begin(), current.end());
+  return current_str;
 }
 
 #if defined(JSON_HAS_INT64)
@@ -360,9 +366,7 @@ Writer::~Writer() = default;
 // Class FastWriter
 // //////////////////////////////////////////////////////////////////
 
-FastWriter::FastWriter()
-
-    = default;
+FastWriter::FastWriter() = default;
 
 void FastWriter::enableYAMLCompatibility() { yamlCompatibilityEnabled_ = true; }
 
